@@ -60,9 +60,11 @@
     function addMenu() {
         var anime = $('[data-action="anime"]');
         if (!anime.length || $('[data-donghua]').length) return;
-        var btn = Lampa.Menu.addButton(anime.find('.menu__ico').html(), 'Донхуа', open);
-        btn.attr('data-donghua', '1');
-        btn.insertAfter(anime);
+        var btn = anime.first().clone();
+        btn.removeAttr('data-action').attr('data-donghua', '1');
+        btn.find('.menu__text').text('Донхуа');
+        btn.on('hover:enter', open);
+        btn.insertAfter(anime.first());
         if (Lampa.Noty) Lampa.Noty.show('Донхуа: пункт меню добавлен');
     }
 
