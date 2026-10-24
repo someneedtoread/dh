@@ -56,24 +56,18 @@
         });
     }
 
+    // Меню Lampa собирается уже после события ready, поэтому ждём пункт «Аниме» и ставим свой рядом.
     function addMenu() {
-        if ($('.menu [data-donghua]').length) return;
-        var ico = $('.menu [data-action="anime"] .menu__ico').html() ||
-            '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
-        var btn = Lampa.Menu.addButton(ico, 'Донхуа', open);
-        btn.attr('data-donghua', '1');
         var anime = $('.menu [data-action="anime"]');
-        if (anime.length) btn.insertAfter(anime);
+        if (!anime.length || $('.menu [data-donghua]').length) return;
+        var btn = Lampa.Menu.addButton(anime.find('.menu__ico').html(), 'Донхуа', open);
+        btn.attr('data-donghua', '1');
+        btn.insertAfter(anime);
     }
 
     function start() {
-        try {
-            Lampa.Api.sources.donghua = new Source();
-            addMenu();
-            if (Lampa.Noty) Lampa.Noty.show('Донхуа: подключено');
-        } catch (e) {
-            if (Lampa.Noty) Lampa.Noty.show('Донхуа: ошибка ' + e.message);
-        }
+        Lampa.Api.sources.donghua = new Source();
+        setInterval(addMenu, 1000);
     }
 
     if (window.appready) start();
