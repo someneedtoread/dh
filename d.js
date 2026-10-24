@@ -67,8 +67,13 @@
     }
 
     function start() {
-        Lampa.Api.sources.donghua = new Source();
-        addMenu();
+        try {
+            Lampa.Api.sources.donghua = new Source();
+            addMenu();
+            if (Lampa.Noty) Lampa.Noty.show('Донхуа: подключено');
+        } catch (e) {
+            if (Lampa.Noty) Lampa.Noty.show('Донхуа: ошибка ' + e.message);
+        }
     }
 
     if (window.appready) start();
