@@ -58,11 +58,12 @@
 
     // Меню Lampa собирается уже после события ready, поэтому ждём пункт «Аниме» и ставим свой рядом.
     function addMenu() {
-        var anime = $('.menu [data-action="anime"]');
-        if (!anime.length || $('.menu [data-donghua]').length) return;
+        var anime = $('[data-action="anime"]');
+        if (!anime.length || $('[data-donghua]').length) return;
         var btn = Lampa.Menu.addButton(anime.find('.menu__ico').html(), 'Донхуа', open);
         btn.attr('data-donghua', '1');
         btn.insertAfter(anime);
+        if (Lampa.Noty) Lampa.Noty.show('Донхуа: пункт меню добавлен');
     }
 
     function start() {
