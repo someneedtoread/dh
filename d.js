@@ -105,5 +105,4 @@
     lock(window, 'VASTPlayer', blocked);
     if (!window.google) window.google = {};
     lock(window.google, 'ima', { AdDisplayContainer: blocked, AdsLoader: blocked, AdsRequest: blocked });
-    try { Lampa.Noty.show('noads: on'); } catch (e) {}
 })();
