@@ -97,9 +97,11 @@
         var account = window.Lampa && Lampa.Account;
         if (!account || typeof account.hasPremium != 'function') return setTimeout(patch, 500);
         var original = account.hasPremium;
+        try { Lampa.Noty.show('noads: on'); } catch (e) {}
         account.hasPremium = function () {
             try {
-                if (/\bcanShow\b/.test(new Error().stack || '')) return true;
+                var stack = new Error().stack || '';
+                if (/\bcanShow\b/.test(stack)) { try { Lampa.Noty.show('noads: skipped'); } catch (e) {} return true; }
             } catch (e) {}
             return original.apply(this, arguments);
         };
