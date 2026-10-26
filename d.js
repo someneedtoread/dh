@@ -64,6 +64,14 @@
         btn.removeAttr('data-action').attr('data-donghua', '1');
         btn.find('.menu__text').text('Донхуа');
         btn.on('hover:enter', open);
+        // Меню Lampa переставляет пункты по списку menu_sort: новое имя уходит в конец. Ставим его в списке сразу после «Аниме».
+        var sort = Lampa.Storage.get('menu_sort', '[]');
+        var name = 'Донхуа';
+        var base = anime.first().find('.menu__text').text().trim();
+        sort = sort.filter(function (n) { return n !== name; });
+        var at = sort.indexOf(base);
+        if (at >= 0) sort.splice(at + 1, 0, name); else sort.push(name);
+        Lampa.Storage.set('menu_sort', sort);
         btn.insertAfter(anime.first());
         if (Lampa.Noty) Lampa.Noty.show('Донхуа: пункт меню добавлен');
     }
@@ -75,4 +83,27 @@
 
     if (window.appready) start();
     else Lampa.Listener.follow('app', function (e) { if (e.type == 'ready') start(); });
+})();
+
+// Без рекламы перед фильмом. Lampa решает показ в одном месте, IMA.canShow: при Premium рекламу пропускает.
+// Отвечаем «Premium есть» только этой проверке (по стеку вызова), остальной Лампе hasPremium отвечает как раньше.
+// Зачем: реклама и фильм на миг делят единственный видеодекодер телевизора, от этого копится утечка и видео встаёт.
+(function () {
+    'use strict';
+    if (window.plugin_noads_ready) return;
+    window.plugin_noads_ready = true;
+
+    function patch() {
+        var account = window.Lampa && Lampa.Account;
+        if (!account || typeof account.hasPremium != 'function') return setTimeout(patch, 500);
+        var original = account.hasPremium;
+        account.hasPremium = function () {
+            try {
+                if (/\bcanShow\b/.test(new Error().stack || '')) return true;
+            } catch (e) {}
+            return original.apply(this, arguments);
+        };
+    }
+
+    patch();
 })();
