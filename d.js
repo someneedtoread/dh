@@ -106,3 +106,27 @@
     if (!window.google) window.google = {};
     lock(window.google, 'ima', { AdDisplayContainer: blocked, AdsLoader: blocked, AdsRequest: blocked });
 })();
+
+// Постеры TMDB. Свои зеркала Lampa (imagetmdb.com и поддомены) с 30.10.2026 ведут на парковку доменов,
+// image.tmdb.org домашний DNS отдаёт как 127.0.0.1, imagetmdb.cub.red не резолвится. Картинки берём через wsrv.nl.
+// Свойство закрыто от записи: Lampa ставит своё TMDB.image при старте, порядок загрузки плагина не важен.
+(function () {
+    'use strict';
+    if (window.plugin_tmdbimg_ready) return;
+    window.plugin_tmdbimg_ready = true;
+
+    function image(url) {
+        url = String(url || '').replace(/^\/+/, '').replace(/\/+/g, '/');
+        return 'https://wsrv.nl/?url=' + encodeURIComponent('image.tmdb.org/' + url);
+    }
+
+    function install() {
+        if (!window.Lampa || !Lampa.TMDB) return false;
+        try {
+            Object.defineProperty(Lampa.TMDB, 'image', { get: function () { return image; }, set: function () {}, configurable: false });
+        } catch (e) {}
+        return true;
+    }
+
+    if (!install()) var timer = setInterval(function () { if (install()) clearInterval(timer); }, 200);
+})();
