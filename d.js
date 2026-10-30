@@ -108,7 +108,8 @@
 })();
 
 // Постеры TMDB. Свои зеркала Lampa (imagetmdb.com и поддомены) с 30.10.2026 ведут на парковку доменов,
-// image.tmdb.org домашний DNS отдаёт как 127.0.0.1, imagetmdb.cub.red не резолвится. Картинки берём через wsrv.nl.
+// image.tmdb.org домашний DNS отдаёт как 127.0.0.1, imagetmdb.cub.red не резолвится. Картинки берём через wsrv.nl
+// по протоколу страницы: Lampa открыта по http, а https к Cloudflare с телевизора рвётся (по http картинка приходит целиком).
 // Свойство закрыто от записи: Lampa ставит своё TMDB.image при старте, порядок загрузки плагина не важен.
 (function () {
     'use strict';
@@ -117,7 +118,7 @@
 
     function image(url) {
         url = String(url || '').replace(/^\/+/, '').replace(/\/+/g, '/');
-        return 'https://wsrv.nl/?url=' + encodeURIComponent('image.tmdb.org/' + url);
+        return (location.protocol == 'https:' ? 'https' : 'http') + '://wsrv.nl/?url=' + encodeURIComponent('image.tmdb.org/' + url);
     }
 
     function install() {
